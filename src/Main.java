@@ -13,27 +13,19 @@ import javafx.animation.Timeline;
 import javafx.util.Duration;
 
 /**
- * Interactive Storytelling App
+ * Interactive Narrative Framework
  *
- * User Manual:
- * This application allows users to make choices in an interactive story.
- * - Upon starting, users will be presented with a narrative and options to choose from.
- * - Some choices will have a timer. If the timer runs out, a default action will occur.
- * - Players can collect items and progress through different story paths.
- *
- * Instructions:
- * 1. Click on the buttons to make choices.
- * 2. Watch for timed choices that require you to respond within a set time limit.
- * 3. Enjoy exploring the story and its branches!
- *
- * Features:
- * - Modular design for easy updates.
- * - Timed choices to increase engagement.
+ * This application allows users to engage in an interactive narrative
+ * where their choices influence the outcome of the story.
  */
 public class Main extends Application {
+    // Main entry point of the application
+    public static void main(String[] args) {
+        launch(args);
+    }
 
-    // --- StoryNode Base Class ---
-    public abstract static class StoryNode {
+    // StoryNode serves as the abstract base class for all types of story nodes
+    public abstract class StoryNode {
         protected String description;
         protected StoryNode[] choices;
         protected String[] choiceTexts;
@@ -57,22 +49,22 @@ public class Main extends Application {
         }
     }
 
-    // --- DialogueNode Class ---
-    public static class DialogueNode extends StoryNode {
+    // DialogueNode is a type of StoryNode that represents dialogue choices
+    public class DialogueNode extends StoryNode {
         public DialogueNode(String description, String[] choiceTexts, StoryNode[] choices) {
             super(description, choiceTexts, choices);
         }
     }
 
-    // --- BattleNode Class ---
-    public static class BattleNode extends StoryNode {
+    // BattleNode is a type of StoryNode that represents battle scenarios
+    public class BattleNode extends StoryNode {
         public BattleNode(String description, String[] choiceTexts, StoryNode[] choices) {
             super(description, choiceTexts, choices);
         }
     }
 
-    // --- Storyline Class ---
-    public static class Storyline {
+    // Storyline contains the structure and initialization of the story
+    public class Storyline {
         private StoryNode startNode;
 
         public Storyline() {
@@ -80,37 +72,37 @@ public class Main extends Application {
         }
 
         private void initializeStory() {
-            // Create choices
-            String[] startChoices = { "Enter the cave", "Walk away" };
+            // Create choices and nodes
+            String[] startChoices = {"Enter the cave", "Walk away"};
             StoryNode start = new DialogueNode("You stand at the entrance of a dark cave. Do you enter?", startChoices, new StoryNode[2]);
 
-            String[] enterChoices = { "Investigate the strange sound", "Look for treasure", "Leave the cave" };
+            String[] enterChoices = {"Investigate the strange sound", "Look for treasure", "Leave the cave"};
             StoryNode enterCave = new DialogueNode("The cave is cold and eerie. You hear strange noises...", enterChoices, new StoryNode[3]);
 
-            String[] findTreasureChoices = { "Open the treasure chest", "Ignore the chest and explore further", "Leave the cave" };
+            String[] findTreasureChoices = {"Open the treasure chest", "Ignore the chest and explore further", "Leave the cave"};
             StoryNode findTreasure = new DialogueNode("You find a treasure chest glowing in the corner.", findTreasureChoices, new StoryNode[3]);
 
-            String[] encounterChoices = { "Fight", "Flee", "Attempt to negotiate" };
+            String[] encounterChoices = {"Fight", "Flee", "Attempt to negotiate"};
             StoryNode encounterMonster = new BattleNode("A wild beast appears! Prepare to fight or flee.", encounterChoices, new StoryNode[3]);
 
-            String[] returnChoices = { "End Story" };
+            String[] returnChoices = {"End Story"};
             StoryNode returnHome = new DialogueNode("You decide to return home, feeling that adventure is not for you.", returnChoices, new StoryNode[1]);
 
             // Set up the connections
             start.getChoices()[0] = enterCave; // Enter the cave
             start.getChoices()[1] = returnHome; // Walk away
 
-            enterCave.getChoices()[0] = new DialogueNode("You decide to investigate the strange sound coming from deeper in the cave.", new String[]{ "Follow the sound deeper", "Leave the cave", "Return to the treasure chest" }, new StoryNode[3]);
+            enterCave.getChoices()[0] = new DialogueNode("You decide to investigate the strange sound coming from deeper in the cave.", new String[]{"Follow the sound deeper", "Leave the cave", "Return to the treasure chest"}, new StoryNode[3]);
             enterCave.getChoices()[1] = findTreasure; // Look for treasure
             enterCave.getChoices()[2] = returnHome; // Leave the cave
 
-            findTreasure.getChoices()[0] = new DialogueNode("You open the treasure chest and find a magical artifact!", new String[]{ "Take the artifact and leave", "Inspect the artifact further", "Close the chest and leave" }, new StoryNode[3]);
+            findTreasure.getChoices()[0] = new DialogueNode("You open the treasure chest and find a magical artifact!", new String[]{"Take the artifact and leave", "Inspect the artifact further", "Close the chest and leave"}, new StoryNode[3]);
             findTreasure.getChoices()[1] = encounterMonster; // Ignore the chest and explore further
             findTreasure.getChoices()[2] = returnHome; // Leave the cave
 
-            encounterMonster.getChoices()[0] = new DialogueNode("You bravely fight the beast and emerge victorious!", new String[]{ "End Story" }, new StoryNode[1]); // Fight
+            encounterMonster.getChoices()[0] = new DialogueNode("You bravely fight the beast and emerge victorious!", new String[]{"End Story"}, new StoryNode[1]); // Fight
             encounterMonster.getChoices()[1] = returnHome; // Flee
-            encounterMonster.getChoices()[2] = new DialogueNode("You try to talk to the beast, and it surprisingly agrees to let you pass.", new String[]{ "End Story" }, new StoryNode[1]); // Attempt to negotiate
+            encounterMonster.getChoices()[2] = new DialogueNode("You try to talk to the beast, and it surprisingly agrees to let you pass.", new String[]{"End Story"}, new StoryNode[1]); // Attempt to negotiate
 
             this.startNode = start;
         }
@@ -120,7 +112,6 @@ public class Main extends Application {
         }
     }
 
-    // --- JavaFX Application ---
     private Storyline storyline;
     private StoryNode currentNode;
     private VBox layout;
@@ -160,7 +151,6 @@ public class Main extends Application {
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Interactive Story App");
-
         primaryStage.show();
     }
 
@@ -239,9 +229,5 @@ public class Main extends Application {
     private void showError(String message) {
         descriptionLabel.setText(message);
         descriptionLabel.setTextFill(Color.RED);
-    }
-
-    public static void main(String[] args) {
-        launch(args);
     }
 }
